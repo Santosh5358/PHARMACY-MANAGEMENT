@@ -51,11 +51,12 @@ app.post('/login', async (req, res) => {
 
 // CRUD Operations for Items
 app.post('/items', async (req, res) => {
-  const { name, price,description } = req.body;
-  const newItem = new Item({ name, price,description });
+  const { name, price,description,quantity } = req.body;
+  const newItem = new Item({ name, price,description,quantity });
   await newItem.save();
   res.json(newItem);
 });
+
 
 app.get('/items', async (req, res) => {
   const items = await Item.find();
@@ -63,9 +64,15 @@ app.get('/items', async (req, res) => {
 });
 
 app.put('/items/:id', async (req, res) => {
-  const { name, price } = req.body;
-  const updatedItem = await Item.findByIdAndUpdate(req.params.id, { name, price }, { new: true });
-  res.json(updatedItem);
+  const { id } = req.params;
+  const { name, price, description, quantity } = req.body;
+
+  try {
+    const updatedItem = await Item.findByIdAndUpdate(id, { name, price, description, quantity }, { new: true });
+    res.status(200).json(updatedItem);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating item', error });
+  }
 });
 
 app.delete('/items/:id', async (req, res) => {
@@ -168,27 +175,27 @@ app.put('/update-phone/:id', async (req, res) => {
   }
 });
 
-app.post('/api/checkout', async (req, res) => {
-  const { userId,invoiceNumber, items, totalPrice, date } = req.body;
+// app.post('/api/checkout', async (req, res) => {
+//   const { userId,invoiceNumber, items, totalPrice, date } = req.body;
   
-  try {
-    // Logic for processing the checkout, e.g., saving the order to the database
-    const order = new Order({
-      userId,
-      invoiceNumber,
-      items,
-      totalPrice,
-      date,
-      status: 'Pending', // Example order status
-    });
+//   try {
+//     // Logic for processing the checkout, e.g., saving the order to the database
+//     const order = new Order({
+//       userId,
+//       invoiceNumber,
+//       items,
+//       totalPrice,
+//       date,
+//       status: 'Pending', // Example order status
+//     });
 
-    await order.save();
-    res.status(200).json({ message: 'Order placed successfully' });
-  } catch (error) {
-    console.error('Error processing order:', error);
-    res.status(500).json({ message: 'There was an error placing your order' });
-  }
-});
+//     await order.save();
+//     res.status(200).json({ message: 'Order placed successfully' });
+//   } catch (error) {
+//     console.error('Error processing order:', error);
+//     res.status(500).json({ message: 'There was an error placing your order' });
+//   }
+// });
 
 app.get('/checkout/:userId', async (req, res) => {
   try {
@@ -208,6 +215,33 @@ app.get('/checkout/:userId', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+app.post('/api/checkout', async (req, res) => {
+  const { userId, invoiceNumber, items, totalPrice, date } = req.body;
+
+  try {
+    // Create a new checkout entry in the database
+    const newCheckout = new Order({
+      userId,
+      invoiceNumber,
+      items, // Assuming the `items` array passed contains details like { id, quantity }
+      totalPrice,
+      date
+    });
+
+    // Save checkout record to the database
+    await newCheckout.save();
+
+    // Send response that checkout was successful
+    res.status(200).json({ message: 'Checkout successful' });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error processing checkout', error });
+  }
+});
+
+
 
 app.get('/invoice/:invoiceNumber', async (req, res) => {
   try {
