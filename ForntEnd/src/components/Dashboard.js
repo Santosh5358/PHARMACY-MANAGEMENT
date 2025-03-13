@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';  
-import { Button, TextField, Typography, Paper, Grid, Alert, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle,Divider,ListItemText,List,ListItem } from '@mui/material';
+import { Button, TextField, Typography, Alert, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle,Divider,List,ListItem } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { jsPDF } from 'jspdf';
 import moment from "moment";
 
 const Dashboard = () => {
   const [items, setItems] = useState([]);
-  const [newItem, setNewItem] = useState({ name: '', price: '', description: '' });
+  const [newItem, setNewItem] = useState({ name: '', price: '', description: '', quantity: 0 });
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isInvoiceVisible, setIsInvoiceVisible] = useState(false);
   const [isInvoiceVisibleEdit, setIsInvoiceVisibleEdit] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 3;
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('name-asc');
   const [editItem, setEditItem] = useState({ name: '', price: '', description: '' });
@@ -27,46 +26,50 @@ const Dashboard = () => {
   const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
+    // Fetch items from the API
     const fetchItems = async () => {
       try {
         const response = await axios.get('http://localhost:5000/items');
         if (response.data && response.data.length > 0) {
-          setItems(response.data);
+          setItems(response.data); // Update the items with the fetched data
         } else {
           const dummyData = [
-            { _id: '1', name: 'Paracetamol', price: '5.00', description: 'Pain reliever and fever reducer' },
-            { _id: '2', name: 'Ibuprofen', price: '7.50', description: 'Anti-inflammatory drug used to reduce fever, pain, and inflammation' },
-            { _id: '3', name: 'Aspirin', price: '3.00', description: 'Painkiller used for reducing pain, fever, and inflammation' },
-            { _id: '4', name: 'Amoxicillin', price: '10.00', description: 'Antibiotic used to treat bacterial infections' },
-            { _id: '5', name: 'Cetirizine', price: '4.00', description: 'Antihistamine used to relieve allergy symptoms like runny nose and sneezing' },
+            { _id: '1', name: 'Paracetamol', price: 5, description: 'Pain reliever and fever reducer' },
+            { _id: '2', name: 'Ibuprofen', price: 7, description: 'Anti-inflammatory drug used to reduce fever, pain, and inflammation' },
+            { _id: '3', name: 'Aspirin', price: 3, description: 'Painkiller used for reducing pain, fever, and inflammation' },
+            { _id: '4', name: 'Amoxicillin', price: 10, description: 'Antibiotic used to treat bacterial infections' },
+            { _id: '5', name: 'Cetirizine', price: 4, description: 'Antihistamine used to relieve allergy symptoms like runny nose and sneezing' },
           ];
-          setItems(dummyData);
+          setItems(dummyData); // Fallback to dummy data if API call fails
         }
       } catch (error) {
         console.error("Error fetching items from database:", error.message);
         const dummyData = [
-          { _id: '1', name: 'Paracetamol', price: '5.00', description: 'Pain reliever and fever reducer' },
-          { _id: '2', name: 'Ibuprofen', price: '7.50', description: 'Anti-inflammatory drug used to reduce fever, pain, and inflammation' },
-          { _id: '3', name: 'Aspirin', price: '3.00', description: 'Painkiller used for reducing pain, fever, and inflammation' },
-          { _id: '4', name: 'Amoxicillin', price: '10.00', description: 'Antibiotic used to treat bacterial infections' },
-          { _id: '5', name: 'Cetirizine', price: '4.00', description: 'Antihistamine used to relieve allergy symptoms like runny nose and sneezing' },
+          { _id: '1', name: 'Paracetamol', price: 5, description: 'Pain reliever and fever reducer' },
+          { _id: '2', name: 'Ibuprofen', price: 7, description: 'Anti-inflammatory drug used to reduce fever, pain, and inflammation' },
+          { _id: '3', name: 'Aspirin', price: 3, description: 'Painkiller used for reducing pain, fever, and inflammation' },
+          { _id: '4', name: 'Amoxicillin', price: 10, description: 'Antibiotic used to treat bacterial infections' },
+          { _id: '5', name: 'Cetirizine', price: 4, description: 'Antihistamine used to relieve allergy symptoms like runny nose and sneezing' },
         ];
-        setItems(dummyData);
+        setItems(dummyData); // Set dummy data on error
       }
     };
-
-    const fetchUserData = () => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));  // Parse and store user data from localStorage
-        } else {
-          navigate('/');  // Redirect to login if no user data found
-        }
-      };
   
+    // Fetch user data from localStorage
+    const fetchUserData = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));  // Parse and store user data from localStorage
+      } else {
+        navigate('/');  // Redirect to login if no user data found
+      }
+    };
+  
+    // Call the functions to fetch data when the component mounts
     fetchUserData();
     fetchItems();
-  }, []);
+  }, [navigate]); // The empty array ensures this effect only runs once when the component mounts
+  
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -117,20 +120,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleRemoveItem = async (itemId) => {
-    try {
-      const updatedItems = invoiceItems.filter(item => item._id !== itemId);
-      calculateTotal(updatedItems);
-      setInvoiceItems(updatedItems);
-      
-      if (updatedItems.length === 0) {
-        closeInvoice(); 
-      }
-    } catch (error) {
-      console.error("Error removing item:", error.message);
-    }
-  };
-
   const handleDialogOpen = () => {
     setOpenDialog(true);
   };
@@ -144,7 +133,7 @@ const Dashboard = () => {
     try {
       const response = await axios.post('http://localhost:5000/items', newItem);
       setItems([...items, response.data]);
-      setNewItem({ name: '', price: '', description: '' });
+      setNewItem({ name: '', price: '', description: '', quantity: 0 });
       setSuccess('Item added successfully!');
       setOpenDialog(false); // Close the dialog after adding item
     } catch (error) {
@@ -177,77 +166,7 @@ const Dashboard = () => {
     setIsInvoiceVisible(true);
   };
 
-  const generateInvoice = () => {
-    // Create a new instance of jsPDF
-    const doc = new jsPDF();
-    
-    // Store information (you can replace this with actual store details)
-    const storeName = "Medical Store";
-    const storeAddress = "123 Pharmacy Lane, City, Country";
-    const storePhone = "(123) 456-7890";
-    
-    // User information
-    const userName = user.username;
-    const userEmail = user.email;
-    const userPhone = user.phone;
-    
-    // Invoice details
-    const invoiceNumber = Math.floor(Math.random() * 1000000); // Simple random invoice number
-    const checkoutDate = moment().format("MMMM Do YYYY, h:mm:ss a");
-  
-    // Title
-    doc.setFontSize(16);
-    doc.text(storeName, 105, 20, null, null, 'center');
-    doc.setFontSize(12);
-    doc.text(storeAddress, 105, 30, null, null, 'center');
-    doc.text(storePhone, 105, 35, null, null, 'center');
-    doc.text(`Invoice Number: #${invoiceNumber}`, 105, 45, null, null, 'center');
-    doc.text(`Date: ${checkoutDate}`, 105, 50, null, null, 'center');
-    
-    // User Information
-    doc.setFontSize(12);
-    doc.text(`Customer Name: ${userName}`, 20, 65);
-    doc.text(`Customer Email: ${userEmail}`, 20, 75);
-    doc.text(`Customer Phone: ${userPhone}`, 20, 85);
-    
-    // Line separator
-    doc.setLineWidth(0.5);
-    doc.line(20, 90, 190, 90);
-    
-    // Table headers (item name, quantity, price, total price)
-    doc.setFontSize(12);
-    doc.text("Item", 20, 100);
-    doc.text("Qty", 100, 100);
-    doc.text("Price", 140, 100);
-    doc.text("Total", 180, 100);
-  
-    // Items list
-    let yOffset = 110;
-    invoiceItems.forEach(item => {
-      doc.text(item.name, 20, yOffset);
-      doc.text(item.quantity.toString(), 100, yOffset);
-      doc.text(`$${item.originalPrice.toFixed(2)}`, 140, yOffset);
-      doc.text(`$${item.price.toFixed(2)}`, 180, yOffset);
-      yOffset += 10;
-    });
-  
-    // Line separator for the footer
-    doc.setLineWidth(0.5);
-    doc.line(20, yOffset + 5, 190, yOffset + 5);
-  
-    // Total Amount
-    doc.setFontSize(14);
-    doc.text(`Total Amount: $${total.toFixed(2)}`, 105, yOffset + 15, null, null, 'center');
-  
-    // Footer message
-    doc.setFontSize(10);
-    doc.text("Thank you for your purchase!", 105, yOffset + 30, null, null, 'center');
-    
-    // Save the document (download the invoice)
-    doc.save(`Invoice_${invoiceNumber}.pdf`);
-  };
-
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     setLoading(true);  // Optionally set loading state to show progress
   
     // Prepare the data to send in the checkout request
@@ -264,22 +183,36 @@ const Dashboard = () => {
       date: moment().format("MMMM Do YYYY, h:mm:ss a"),  // Current date and time
     };
   
-    // Call your API endpoint to process the checkout
-    axios
-      .post('http://localhost:5000/api/checkout', checkoutData)
-      .then((response) => {
-        setLoading(false);
-        alert('Order placed successfully');
-        // You can also handle any logic after successful checkout (like clearing the cart)
-        closeInvoice();
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.error(error);
-        alert('There was an error placing your order');
-      });
+    try {
+      // Send checkout data to the backend
+       await axios.post('http://localhost:5000/api/checkout', checkoutData);
+  
+      // After the order is placed, update the medicine quantities in the database
+      // await updateQuantitiesInDatabase();
+  
+      setLoading(false);
+      alert('Order placed successfully');
+      closeInvoice();
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+      alert('There was an error placing your order');
+    }
   };
-
+  
+  // Helper function to update quantities of items in the database
+  // const updateQuantitiesInDatabase = async () => {
+  //   try {
+  //     // Loop through each item in the invoice and update its quantity in the database
+  //     for (const item of invoiceItems) {
+  //       const updatedQuantity = item.originalQuantity - item.quantity;  // Decrease quantity by the ordered amount
+  //       await axios.put(`http://localhost:5000/items/${item._id}`, { quantity: updatedQuantity });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating quantities:", error.message);
+  //     alert("There was an error updating quantities in the database.");
+  //   }
+  // };
   const closeInvoice = () => {
     setIsInvoiceVisible(false);
     setSelectedItems([]);
@@ -328,12 +261,6 @@ const Dashboard = () => {
   return (
     <div className="container mt-5">
 
-    <div className="d-flex justify-content-end mb-4">
-        <Button variant="contained" color="primary" onClick={handleDialogOpen}>
-          Add Item
-        </Button>
-      </div>
-
     <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>Add Medicine</DialogTitle>
         <DialogContent>
@@ -365,6 +292,15 @@ const Dashboard = () => {
               required
               margin="normal"
             />
+              {/* <TextField
+              label="Quantity"
+              type="number"
+              fullWidth
+              value={newItem.quantity}
+              onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) })}
+              required
+              margin="normal"
+              /> */}
           </form>
         </DialogContent>
         <DialogActions>
@@ -399,6 +335,12 @@ const Dashboard = () => {
         </select>
       </div>
 
+      <div className="d-flex justify-content-end mb-4">
+        <Button variant="contained" color="primary" onClick={handleDialogOpen}>
+          Add Item
+        </Button>
+      </div>
+
       {/* Items List */}
       <div className="card p-4 mb-4" >
         <h3 className="card-title m-auto">Medicine List</h3>
@@ -410,8 +352,9 @@ const Dashboard = () => {
             <div key={item._id} className="d-flex justify-content-between align-items-center mb-3">
               <div className="d-flex align-items-center">
                 <input type="checkbox" checked={selectedItems.includes(item)} onChange={() => toggleSelectItem(item._id)} className="me-2" />
-                <strong>{item.name}</strong> - ${item.price}
+                <strong>{item.name}</strong> - ${item.price.toFixed(2)}
                 <p className='m-3'>{item.description}</p>
+                {/* <p className='m-3'>{item.quantity}</p> */}
               </div>
               <div className="d-flex gap-2">
                 <button className="btn btn-sm btn-warning" onClick={() => handleEditItem(item)}>Edit</button>
@@ -422,13 +365,49 @@ const Dashboard = () => {
           ))
         )}
 
-        {/* Buy Button */}
         {selectedItems.length > 0 && (
           <button className="btn btn-success mt-3" onClick={handleBuyItems}>
             Buy Selected Items
           </button>
         )}
       </div>
+
+    {/* <div className="card p-4 mb-4">
+      <h3 className="card-title m-auto">Medicine List</h3>
+      {currentItems.length === 0 ? (
+        <p>No items available.</p>
+      ) : (
+        currentItems.map((item) => (
+          <ol key={item._id}>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="d-flex align-items-center">
+                <strong>{item.name}</strong> - ₹{item.price}
+                <p className="m-3">{item.description}</p>
+              </div>
+              <div className="d-flex gap-2">
+                <button className="btn btn-sm btn-warning" onClick={() => handleEditItem(item)}>
+                  Edit
+                </button>
+                <button className="btn btn-sm btn-danger" onClick={() => handleRemoveItemDB(item._id)}>
+                  Remove
+                </button>
+              </div>
+            </div>
+          </ol>
+        ))
+      )}
+
+      <div className="mt-3">
+        <strong>Total Price: ₹{currentItems.reduce((total, item) => total + item.price, 0).toFixed(2)}</strong>
+      </div>
+
+      {currentItems.length > 0 && (
+        <button className="btn btn-success mt-3" onClick={handleBuyItems}>
+          Buy All Items
+        </button>
+      )}
+    </div> */}
+
 
       {/* Pagination */}
       <div className="d-flex justify-content-between">
@@ -466,6 +445,14 @@ const Dashboard = () => {
                 className="form-control"
                 placeholder="Description"
               />
+{/*               
+              <input
+                type="number"
+                value={editItem.quantity}
+                onChange={(e) => setEditItem({ ...editItem, quantity: e.target.value })}
+                className="form-control"
+                placeholder="Quantity"
+              /> */}
               
               <div className="d-flex justify-content-between">
                 <button type="button" className="btn btn-secondary" onClick={closeEdit}>Close</button>
