@@ -67,7 +67,7 @@ const Register = () => {
   };
 
   return (
-    <Paper style={{ padding: '10px', margin: '10px ', maxWidth: '600px', margin: 'auto', height: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <Paper style={{ padding: '10px', maxWidth: '600px', margin: 'auto', height: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ width: '100%' }}>
         <Typography variant="h4" align="center" gutterBottom>Registration </Typography>
 
