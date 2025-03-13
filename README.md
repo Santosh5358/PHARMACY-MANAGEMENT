@@ -32,7 +32,7 @@ It allows users to interact with the system through a modern web interface, and 
 
 - **Admin Features**:
   - Add, edit, and remove medicines.
-  - Manage inventory and stock levels.
+  - Manage inventory.
   
 - **User Features**:
   - Register and login to the system.
@@ -40,9 +40,6 @@ It allows users to interact with the system through a modern web interface, and 
   - Make purchases and view previous orders.
   - View invoices for completed orders.
   - Update profile information, including phone number and password.
-  
-- **Authentication**:
-  - Secure login/logout functionality with JWT-based authentication.
   
 - **Invoice Generation**:
   - Users can download or view invoices for their past orders.
