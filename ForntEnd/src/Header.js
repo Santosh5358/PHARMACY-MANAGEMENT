@@ -52,7 +52,6 @@ const Header = () => {
             ) : (
               // If the user is not logged in, show the Login button
               <>
-                  // If the user is not logged in, show the Login button
                   <Nav.Link as={Link} to="/">MyWebsite</Nav.Link></>
             )}
         
@@ -71,7 +70,7 @@ const Header = () => {
             ) : (
               // If the user is not logged in, show the Login button
               <>
-                  // If the user is not logged in, show the Login button
+                  
                   <Nav.Link as={Link} to="/" className="nav-item-hover">Login</Nav.Link><Nav.Link as={Link} to="/contact-us" className="nav-item-hover">Contact Us</Nav.Link></>
             )}
           </Nav>
