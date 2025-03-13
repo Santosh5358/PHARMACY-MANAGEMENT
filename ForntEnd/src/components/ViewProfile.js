@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Paper, Grid, Alert } from '@mui/material';
+import { TextField, Button, Paper, Grid, Alert } from '@mui/material';
 import axios from 'axios';
 
 const ViewProfile = () => {
