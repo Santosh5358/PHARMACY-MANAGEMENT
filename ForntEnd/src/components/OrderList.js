@@ -6,7 +6,7 @@ import jsPDF from 'jspdf';
 import moment from 'moment';
 
 const OrderList = ({ userId }) => {
-  const [orders, setOrders] = useState([]);
+  // const [orders, setOrders] = useState([]);
   const [checkoutDetails, setCheckoutDetails] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -82,8 +82,8 @@ const OrderList = ({ userId }) => {
 
     doc.setFontSize(12);
     doc.text("Item", 20, 100);
-    doc.text("Qty", 100, 100);
     doc.text("Price", 140, 100);
+    doc.text("Qty", 100, 100);
     doc.text("Total", 180, 100);
 
     let yOffset = 110;
