@@ -1,0 +1,7 @@
+[build]
+  functions = "netlify/functions"  # Directory for serverless functions
+  publish = "public"               # Directory for static files (optional)
+
+[dev]
+  functions = "netlify/functions"  # Functions directory during local dev
+  publish = "public"               # Optional for static assets
