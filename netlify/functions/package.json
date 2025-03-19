@@ -2,7 +2,7 @@
   "name": "pharmacy-management",
   "version": "1.0.0",
   "scripts": {
-    "start": "node server.js"
+    "start": "node hello.js"
   },
   "dependencies": {
     "express": "^4.21.2",
