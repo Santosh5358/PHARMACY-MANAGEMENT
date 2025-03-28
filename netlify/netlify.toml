@@ -1,6 +1,8 @@
 [build]
-  functions = "netlify/functions"  # Directory for serverless functions
-  publish = "public"               # Directory for static files (optional)
+command = "npm --prefix ./netlify install && npm --prefix ./frontend run build"
+publish = "frontend/build"
+environment = { NODE_VERSION = "18" }
+
 
 [dev]
   functions = "netlify/functions"  # Functions directory during local dev
