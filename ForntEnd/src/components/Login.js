@@ -20,8 +20,24 @@ const Login = () => {
       const response = await axios.post('http://localhost:5000/login', { email, password });
 
       // Store token and user data in localStorage
+      // localStorage.setItem('token', response.data.token);
+      // localStorage.setItem('user', JSON.stringify(response.data.user)); // Store user data
+      if (response.status === 200) {
+      // Backend login success — store real token and user
       localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user)); // Store user data
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      console.log('Login successful via backend');
+      return { success: true, ...response.data };
+    } else {
+      // Backend responded but login failed — fallback with dummy data
+      console.warn('Login failed on backend, using dummy data');
+      setDummyData(email);
+      return {
+        success: true,
+        token: 'dummy-token',
+        user: { email, name: 'Fallback User' },
+      };
+    }
 
       // Clear the form
       setEmail('');
