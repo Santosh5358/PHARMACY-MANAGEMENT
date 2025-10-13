@@ -50,6 +50,11 @@ const Login = () => {
     } finally {
       setLoading(false); // Stop loading
     }
+
+    function setDummyData(email) {
+      localStorage.setItem('token', 'dummy-token');
+      localStorage.setItem('user', JSON.stringify({ email, name: 'Fallback User' }));
+    }
   };
 
   // Redirect to the register page
