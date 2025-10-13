@@ -51,7 +51,7 @@ const Register = () => {
     setLoading(true); // Start loading
 
     try {
-      await axios.post('http://localhost:5000/register', { username, email, age, password, phone });
+      await axios.post('https://pharmacy-management-7t8g.onrender.com', { username, email, age, password, phone });
       alert('User registered successfully');
       navigate('/');
     } catch (error) {
