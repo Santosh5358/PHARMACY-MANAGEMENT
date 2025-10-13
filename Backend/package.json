@@ -1,8 +1,10 @@
 {
   "name": "practice",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "heroku-postbuild": "cd ../ForntEnd && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,14 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.2",
     "moment": "^2.30.1",
-    "mongoose": "^8.9.5"
+    "mongoose": "^8.9.5",
+    "serverless-http": "^2.7.0"
   }
-  "dependencies": {
-  "express": "^4.17.1",
-  "serverless-http": "^2.7.0"
-  }
-}
-"scripts": {
-  "start": "node server.js",
-  "heroku-postbuild": "cd ../ForntEnd && npm install && npm run build"
 }
