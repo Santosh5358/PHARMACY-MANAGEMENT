@@ -16,7 +16,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB Connection
-mongoose.connect('mongodb://127.0.0.1:27017/billing-app', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://santoshkumarscsebtech:dPdruUquqAl8TsUK@cluster0.sg9bj.mongodb.net/myDatabase?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // User Registration Route
 app.post('/register', async (req, res) => {
