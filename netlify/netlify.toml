@@ -1,5 +1,5 @@
 [build]
-command = "npm --prefix ./netlify install && npm --prefix ./frontend run build"
+command =  "npm install && npm run build"
 publish = "frontend/build"
 environment = { NODE_VERSION = "18" }
 
@@ -7,3 +7,4 @@ environment = { NODE_VERSION = "18" }
 [dev]
   functions = "netlify/functions"  # Functions directory during local dev
   publish = "public"               # Optional for static assets
+
