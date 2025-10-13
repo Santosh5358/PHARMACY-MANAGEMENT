@@ -17,7 +17,7 @@ const Login = () => {
     setError(''); // Reset previous errors
     
     try {
-      const response = await axios.post('http://localhost:5000/login', { email, password });
+      const response = await axios.post('https://pharmacy-management-7t8g.onrender.com/login', { email, password });
 
       // Store token and user data in localStorage
       // localStorage.setItem('token', response.data.token);
