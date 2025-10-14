@@ -27,6 +27,12 @@ const Login = () => {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       console.log('Login successful via backend');
+              // Clear the form
+      setEmail('');
+      setPassword('');
+
+      // Redirect to the dashboard after successful login
+      navigate('/dashboard');
       return { success: true, ...response.data };
     } 
     // else {
@@ -40,12 +46,7 @@ const Login = () => {
     //   // };
     // }
 
-      // Clear the form
-      setEmail('');
-      setPassword('');
 
-      // Redirect to the dashboard after successful login
-      navigate('/dashboard');
     } catch (error) {
       setError('Invalid credentials, please try again.'); // Show error message
     } finally {
@@ -123,3 +124,4 @@ const Login = () => {
 };
 
 export default Login;
+
