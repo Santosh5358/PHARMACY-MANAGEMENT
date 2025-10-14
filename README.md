@@ -5,6 +5,7 @@ This is a **Pharmacy Management System** built using **React.js** for the fronte
 The project enables both **admin** users (for adding, editing, and removing medicines) and **regular users** (for browsing, purchasing medicines, and managing their profile).
 
 **Live Website:** [https://delicate-pithivier-c8ee9e.netlify.app/](https://delicate-pithivier-c8ee9e.netlify.app/))
+Use userName as Sam@gmail.com and Password Santosh@1234 To Login
 
 ## Table of Contents
 - [Project Description](#project-description)
