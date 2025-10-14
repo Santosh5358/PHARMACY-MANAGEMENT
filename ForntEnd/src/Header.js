@@ -11,24 +11,25 @@ const Header = () => {
   const toggleMenu = () => setShowMenu(!showMenu);
 
   // Check login status on mount and listen to changes in localStorage
-  useEffect(() => {
+   useEffect(() => {
     // Function to check login status from localStorage
     const checkLoginStatus = () => {
       const token = localStorage.getItem('token');
-      setIsLoggedIn(!!token); // If a token exists, the user is logged in
+      setIsLoggedIn(!!token);
     };
 
     // Check login status initially
     checkLoginStatus();
+    const interval = setInterval(checkLoginStatus, 1000);
 
     // Listen for changes to localStorage and update login state
     window.addEventListener('storage', checkLoginStatus);
 
     // Cleanup listener on component unmount
     return () => {
-      window.removeEventListener('storage', checkLoginStatus);
+      clearInterval(interval);
     };
-  }, []); // Empty dependency array ensures this effect runs only once on mount
+  }, []);  // Empty dependency array ensures this effect runs only once on mount
 
   // Handle logout logic
   const handleLogout = () => {
@@ -81,3 +82,4 @@ const Header = () => {
 };
 
 export default Header;
+
