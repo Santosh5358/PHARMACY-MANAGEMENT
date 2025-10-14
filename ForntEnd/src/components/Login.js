@@ -33,7 +33,6 @@ const Login = () => {
 
       // Redirect to the dashboard after successful login
       navigate('/dashboard');
-      return { success: true, ...response.data };
     } 
     // else {
     //   // Backend responded but login failed — fallback with dummy data
@@ -124,4 +123,5 @@ const Login = () => {
 };
 
 export default Login;
+
 
