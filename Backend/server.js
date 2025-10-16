@@ -17,7 +17,6 @@ app.use(bodyParser.json());
 
 require('dotenv').config();
 // MongoDB Connection
-const mongoose = require('mongoose');
 
 // Connect to MongoDB using the URI from environment variables
 mongoose.connect(process.env.MONGODB_URI, {
