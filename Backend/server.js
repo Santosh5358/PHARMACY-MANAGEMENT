@@ -15,8 +15,17 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+require('dotenv').config();
 // MongoDB Connection
-mongoose.connect('mongodb+srv://santoshkumarscsebtech:dPdruUquqAl8TsUK@cluster0.sg9bj.mongodb.net/myDatabase?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+onst mongoose = require('mongoose');
+
+// Connect to MongoDB using the URI from environment variables
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected'))
+.catch((err) => console.error('MongoDB connection error:', err));
 
 // User Registration Route
 app.post('/register', async (req, res) => {
