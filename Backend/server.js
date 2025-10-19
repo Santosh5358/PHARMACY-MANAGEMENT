@@ -12,7 +12,14 @@ const { jsPDF } = require('jspdf');
 const moment = require('moment');
 
 const app = express();
-app.use(cors());
+const corsOptions = {
+  origin: 'https://delicate-pithivier-c8ee9e.netlify.app', // Allow your frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+  credentials: true, // If you're sending cookies or authorization headers
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 require('dotenv').config();
