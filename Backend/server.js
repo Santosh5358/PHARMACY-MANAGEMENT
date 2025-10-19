@@ -46,22 +46,36 @@ app.post('/register', async (req, res) => {
 // User Login Route
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
   
+  // Find user by email
+  const user = await User.findOne({ email }).select('+password');
+  if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
-  if (!user) {
-    return res.status(400).json({ message: 'Invalid credentials' });
-  }
+  // Check if password matches
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return res.status(401).json({ error: 'Invalid credentials' });
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    return res.status(400).json({ message: 'Invalid credentials' });
-  }
+  // Sign the JWT token, setting the expiration time to 5 minutes
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '5m' });
 
-  const token = jwt.sign({ userId: user._id }, 'secretkey', { expiresIn: '1h' });
-  res.json({ token,user});
+  // Optionally: Send the token as an httpOnly cookie
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production (https)
+    sameSite: 'Strict', // Prevent CSRF attacks
+    maxAge: 5 * 60 * 1000 // Set maxAge to 5 minutes (same as JWT expiration)
+  });
+
+  // Return user data without sensitive information
+  const safeUser = {
+    username: user.username,
+    email: user.email,
+    age: user.age,
+    phone: user.phone
+  };
+
+  return res.json({ user: safeUser });
 });
-
 
 
 // CRUD Operations for Items
