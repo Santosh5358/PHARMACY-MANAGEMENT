@@ -68,7 +68,7 @@ app.post('/login', async (req, res) => {
 
   // Return user data without sensitive information
   const safeUser = {
-    userId: user._id,
+    _id: user._id,
     username: user.username,
     email: user.email,
     age: user.age,
